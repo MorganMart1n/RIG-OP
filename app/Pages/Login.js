@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { Input, Button, Card } from '@ui-kitten/components';
+import { Input, Button, Card, Text } from '@ui-kitten/components';
 import { StyleSheet, View, Image, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-const serverIp = process.env.SERVER_IP;
+
+
 function LoginScreen() {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -32,9 +33,10 @@ function LoginScreen() {
         throw new Error(data.message || 'Login failed.');
       }
 
-
+      else{
       Alert.alert('Success', 'Login successful!');
-      navigation.navigate('Home');
+      navigation.navigate('MainTabs');
+      }
     } catch (error) {
       Alert.alert('Login Failed', error.message || 'Unable to connect to the server.');
     } finally {
@@ -69,6 +71,7 @@ function LoginScreen() {
           {isLoading ? 'Loading...' : 'Submit'}
         </Button>
       </Card>
+      <Text styles={styles.TextLink} onPress={() => navigation.navigate('Create')}>Click Here to request a Account</Text>
     </View>
   );
 }
@@ -113,6 +116,9 @@ const styles = StyleSheet.create({
   button: {
     margin: 10,
     backgroundColor: '#001242',
+  },
+  TextLink: {
+   marginVertical:120,
   },
 });
 
