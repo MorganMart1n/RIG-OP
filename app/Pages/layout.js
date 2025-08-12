@@ -6,7 +6,7 @@ import ProfileScreen from './profile';
 import SupportScreen from './support';
 import ReportScreen from './report';
 import LoginScreen from './Login';
-import CreateScreen from './Create';
+import CreateScreen from './createAccount';
 
 const Tab = createBottomTabNavigator();
 const Stack =createNativeStackNavigator();

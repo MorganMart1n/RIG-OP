@@ -1,23 +1,45 @@
 const { MongoClient } = require('mongodb');
-const { Collection } = require('mongoose');
-require('dotenv').config({path: './config.env'});
+require('dotenv').config({ path: './config.env' });
 
-async function main(){
+async function main() {
     const DB = process.env.MONGO_URI;
-    const client = new MongoClient(DB);
+    
+    if (!DB) {
+        console.error('FATAL ERROR: MONGO_URI is not defined in config.env');
+        process.exit(1);
+    }
 
-    try{
+    const client = new MongoClient(DB, {
+        connectTimeoutMS: 5000,
+        serverSelectionTimeoutMS: 5000
+    });
+
+    try {
         await client.connect();
-        console.log("Connected successfully to the database.");
+        console.log("Connected successfully to MongoDB server");
 
-        const collections = await client.db("Rig-Op").collections();
+        const db = client.db("Rig-Op");
+        console.log(`Database: ${db.databaseName}`);
 
-               collections.forEach((collection) =>
-            console.log(collection.collectionName)
-        );
-    } catch(e){
-        console.error("Connection failed:", e);
-    } 
+        const collections = await db.collections();
+        console.log(" Collections:");
+        collections.forEach(col => console.log(`- ${col.collectionName}`));
+
+    } catch (e) {
+        console.error("onnection failed:", e.message);
+        if (e.code === 'ENOTFOUND') {
+            console.error("Check your MongoDB server URL and network connection");
+        }
+    } finally {
+        await client.close();
+        console.log("Connection closed");
+    }
 }
 
-main().catch(console.error);
+// Run with better error handling
+main()
+    .then(() => process.exit(0))
+    .catch((e) => {
+        console.error("Fatal error:", e);
+        process.exit(1);
+    });
