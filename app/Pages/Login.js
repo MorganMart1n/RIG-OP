@@ -20,23 +20,21 @@ function LoginScreen() {
     }
     setIsLoading(true);
     try {
-      const response = await fetch(`/login`, {
+      const response = await fetch(`http://192.168.4.50:8081/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       });
 
       const data = await response.json();
-
- 
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed.');
+      if (data.success) {
+          Alert.alert('Success', 'Login successful!');
+          navigation.navigate('MainTabs');
+      }else{
+        //executes if backend isnt communicating backwards
+          Alert.alert('Error', data.message || 'Login failed.');
       }
 
-      else{
-      Alert.alert('Success', 'Login successful!');
-      navigation.navigate('MainTabs');
-      }
     } catch (error) {
       Alert.alert('Login Failed', error.message || 'Unable to connect to the server.');
     } finally {
