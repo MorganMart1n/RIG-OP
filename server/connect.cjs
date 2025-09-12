@@ -1,14 +1,23 @@
-const { MongoClient } = require('mongodb');
-require('dotenv').config({ path: './config.env' });
+// server/server.js
+import { MongoClient } from 'mongodb';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Correctly load the .env file from the parent directory
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
+
+const DB = process.env.MONGO_URI;
+
+if (!DB) {
+    console.error('FATAL ERROR: MONGO_URI is not defined in root .env');
+    process.exit(1);
+}
 
 async function main() {
-    const DB = process.env.MONGO_URI;
-    
-    if (!DB) {
-        console.error('FATAL ERROR: MONGO_URI is not defined in config.env');
-        process.exit(1);
-    }
-
     const client = new MongoClient(DB, {
         connectTimeoutMS: 5000,
         serverSelectionTimeoutMS: 5000
@@ -17,29 +26,13 @@ async function main() {
     try {
         await client.connect();
         console.log("Connected successfully to MongoDB server");
-
         const db = client.db("Rig-Op");
         console.log(`Database: ${db.databaseName}`);
-
-        const collections = await db.collections();
-        console.log(" Collections:");
-        collections.forEach(col => console.log(`- ${col.collectionName}`));
-
     } catch (e) {
-        console.error("onnection failed:", e.message);
-        if (e.code === 'ENOTFOUND') {
-            console.error("Check your MongoDB server URL and network connection");
-        }
+        console.error("Connection failed:", e.message);
     } finally {
         await client.close();
-        console.log("Connection closed");
     }
 }
 
-// Run with better error handling
-main()
-    .then(() => process.exit(0))
-    .catch((e) => {
-        console.error("Fatal error:", e);
-        process.exit(1);
-    });
+main().catch(console.error);

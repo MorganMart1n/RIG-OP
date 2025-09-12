@@ -3,6 +3,7 @@ import React from 'react';
 import { Input, Button, Card, Text } from '@ui-kitten/components';
 import { StyleSheet, View, Image, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { API_URL } from '@env';
 
 
 function LoginScreen() {
@@ -10,7 +11,6 @@ function LoginScreen() {
   const [password, setPassword] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const navigation = useNavigation();
-
 
   async function handleLogin() {
 
@@ -20,7 +20,7 @@ function LoginScreen() {
     }
     setIsLoading(true);
     try {
-      const response = await fetch(`http://192.168.4.50:8081/login`, {
+      const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
