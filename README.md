@@ -1,4 +1,7 @@
-<h1>Rig-Op</h1>
+
+ <img src="https://github.com/MorganMart1n/RIG-OP/blob/main/assets/Bar-Logo.png?raw=true" alt="Radeon Logo" width="350"/>
+<h1>Rig-Op</h1>   
+
 
 Is an offshore operational reporting system designed to streamline and centralize key functions within an offshore environment. It provides a comprehensive platform for managing maintenance, inventory, support tickets, and emergency communications.
 
