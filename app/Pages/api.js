@@ -1,25 +1,7 @@
-/**
- * api.js  –  Central fetch wrapper for Rig-Op
- *
- * Usage:
- *   import { apiGet, apiPost, apiPatch, saveToken, clearToken } from './api';
- *
- *   // After login:
- *   await saveToken(data.token);
- *
- *   // Any authenticated request:
- *   const data = await apiPost('/profile');
- *   const data = await apiGet('/reports/list');
- *   const data = await apiPatch(`/support/${id}/status`, { status: 'Resolved' });
- *
- *   // On logout:
- *   await clearToken();
- */
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 
-export const BASE_URL = 'http://192.168.4.74:8082';
+export const BASE_URL = 'http://192.168.0.210:8082';
 
 // ── Token helpers ─────────────────────────────────────────────────────────
 const TOKEN_KEY = '@rig_op_token';

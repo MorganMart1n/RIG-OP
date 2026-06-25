@@ -1,35 +1,43 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet,
-  Image, Alert, ScrollView, KeyboardAvoidingView,
-  Platform, ActivityIndicator,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Alert,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { API_URL } from '@env';
 import { COLORS, S, F, R, SHADOW, T } from './styles/theme';
+
+import { BASE_URL } from './api';
 
 function CreateScreen() {
   const navigation = useNavigation();
 
-  // --- State Hooks ---
-  const [fname, setFname] = useState('');
-  const [sname, setSname] = useState('');
-  const [email, setEmail] = useState('');
-  const [phonenumber, setPhoneNumber] = useState('');
-  const [password, setPassword] = useState('');
+  const [fname,           setFname]           = useState('');
+  const [sname,           setSname]           = useState('');
+  const [email,           setEmail]           = useState('');
+  const [phonenumber,     setPhoneNumber]     = useState('');
+  const [password,        setPassword]        = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('');
-  const [subRole, setSubRole] = useState(''); 
-  const [dob, setDob] = useState(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [focusedField, setFocusedField] = useState(null);
+  const [role,            setRole]            = useState('');
+  const [subRole,         setSubRole]         = useState('');
+  const [dob,             setDob]             = useState(null);
+  const [showDatePicker,  setShowDatePicker]  = useState(false);
+  const [isLoading,       setIsLoading]       = useState(false);
+  const [focusedField,    setFocusedField]    = useState(null);
 
   const inputStyle = (field) => [
     T.input,
-    focusedField === field && styles.inputFocused,
+    focusedField === field && T.inputFocused,
   ];
 
   const handleDateChange = (event, selectedDate) => {
@@ -42,12 +50,10 @@ function CreateScreen() {
       Alert.alert('Missing Fields', 'Please fill out all fields.');
       return;
     }
-
     if (role === 'Maintenance' && !subRole) {
       Alert.alert('Specialization Required', 'Please select your trade.');
       return;
     }
-
     if (password !== confirmPassword) {
       Alert.alert('Password Mismatch', 'Passwords do not match.');
       return;
@@ -55,19 +61,13 @@ function CreateScreen() {
 
     setIsLoading(true);
     try {
-      const response = await fetch(`${API_URL}/createAccount`, {
-        method: 'POST',
+      const response = await fetch(`${BASE_URL}/createAccount`, {
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fname,
-          sname,
-          email,
-          phonenumber,
-          password,
-          role,    
-          subRole, 
-          isActive: false,
-          dob,
+        body:    JSON.stringify({
+          fname, sname, email, phonenumber,
+          password, role, subRole,
+          isActive: false, dob,
         }),
       });
 
@@ -85,31 +85,32 @@ function CreateScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.flex}
+      style={{ flex: 1, backgroundColor: COLORS.bg }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView
         contentContainerStyle={styles.scroll}
         keyboardShouldPersistTaps="handled"
       >
+        {/* Top band + logo */}
         <View style={styles.topBand}>
-          <View style={styles.logoPill}>
-            <Image
-              source={require('../../assets/Bar-Logo.png')}
-              style={styles.logo}
-            />
-          </View>
+          <Image
+            source={require('../../assets/Bar-Logo.png')}
+            style={styles.logo}
+          />
         </View>
 
-        <View style={styles.card}>
+        {/* Card */}
+        <View style={[T.card, styles.cardWide]}>
           <View style={styles.cardHeader}>
             <View style={styles.accentBar} />
-            <Text style={styles.cardTitle}>NEW ACCOUNT</Text>
+            <Text style={T.h3}>NEW ACCOUNT</Text>
           </View>
 
+          {/* First name / Surname row */}
           <View style={T.row}>
-            <View style={styles.halfField}>
-              <Text style={styles.whiteLabel}>First Name</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.fieldLabel}>First Name</Text>
               <TextInput
                 style={inputStyle('fname')}
                 placeholder="John"
@@ -120,8 +121,8 @@ function CreateScreen() {
                 onBlur={() => setFocusedField(null)}
               />
             </View>
-            <View style={[styles.halfField, { marginLeft: S.sm }]}>
-              <Text style={styles.whiteLabel}>Surname</Text>
+            <View style={{ flex: 1, marginLeft: S.sm }}>
+              <Text style={styles.fieldLabel}>Surname</Text>
               <TextInput
                 style={inputStyle('sname')}
                 placeholder="Doe"
@@ -134,7 +135,7 @@ function CreateScreen() {
             </View>
           </View>
 
-          <Text style={styles.whiteLabel}>Email</Text>
+          <Text style={styles.fieldLabel}>Email</Text>
           <TextInput
             style={inputStyle('email')}
             placeholder="john.doe@rigop.com"
@@ -147,7 +148,7 @@ function CreateScreen() {
             onBlur={() => setFocusedField(null)}
           />
 
-          <Text style={styles.whiteLabel}>Phone Number</Text>
+          <Text style={styles.fieldLabel}>Phone Number</Text>
           <TextInput
             style={inputStyle('phone')}
             placeholder="+44 7700 000000"
@@ -159,9 +160,9 @@ function CreateScreen() {
             onBlur={() => setFocusedField(null)}
           />
 
-          <Text style={styles.whiteLabel}>Date of Birth</Text>
+          <Text style={styles.fieldLabel}>Date of Birth</Text>
           <TouchableOpacity
-            style={[styles.datePicker, focusedField === 'dob' && styles.inputFocused]}
+            style={[styles.datePicker, focusedField === 'dob' && T.inputFocused]}
             onPress={() => { setShowDatePicker(true); setFocusedField('dob'); }}
           >
             <Text style={dob ? styles.dateTextSet : styles.dateTextPlaceholder}>
@@ -178,7 +179,7 @@ function CreateScreen() {
             />
           )}
 
-          <Text style={styles.whiteLabel}>Password</Text>
+          <Text style={styles.fieldLabel}>Password</Text>
           <TextInput
             style={inputStyle('pass')}
             placeholder="Create a password"
@@ -190,7 +191,7 @@ function CreateScreen() {
             onBlur={() => setFocusedField(null)}
           />
 
-          <Text style={styles.whiteLabel}>Confirm Password</Text>
+          <Text style={styles.fieldLabel}>Confirm Password</Text>
           <TextInput
             style={inputStyle('cpass')}
             placeholder="Repeat password"
@@ -202,49 +203,46 @@ function CreateScreen() {
             onBlur={() => setFocusedField(null)}
           />
 
-          <Text style={styles.whiteLabel}>Team / Department</Text>
-          <View style={styles.pickerWrap}>
+          <Text style={styles.fieldLabel}>Team / Department</Text>
+          <View style={T.pickerWrap}>
             <Picker
               selectedValue={role}
-              onValueChange={(itemValue) => {
-                setRole(itemValue);
-                setSubRole(''); 
-              }}
+              onValueChange={(val) => { setRole(val); setSubRole(''); }}
               style={styles.picker}
               dropdownIconColor={COLORS.textMuted}
               mode="dropdown"
             >
-              <Picker.Item label="Select your team..." value="" color={COLORS.textMuted} />
-              <Picker.Item label="Cleaning Team" value="Cleaning" color="#000000" />
-              <Picker.Item label="IT Team" value="IT" color="#000000" />
-              <Picker.Item label="Maintenance Team" value="Maintenance" color="#000000" />
-              <Picker.Item label="Medical Team" value="Medic" color="#000000" />
+              <Picker.Item label="Select your team..."  value=""            color={COLORS.textMuted} />
+              <Picker.Item label="Cleaning Team"        value="Cleaning"    color="#000000" />
+              <Picker.Item label="IT Team"              value="IT"          color="#000000" />
+              <Picker.Item label="Maintenance Team"     value="Maintenance" color="#000000" />
+              <Picker.Item label="Medical Team"         value="Medic"       color="#000000" />
             </Picker>
           </View>
 
           {role === 'Maintenance' && (
             <>
-              <Text style={styles.whiteLabel}>Trade Specialization</Text>
-              <View style={styles.pickerWrap}>
+              <Text style={styles.fieldLabel}>Trade Specialization</Text>
+              <View style={T.pickerWrap}>
                 <Picker
                   selectedValue={subRole}
-                  onValueChange={(itemValue) => setSubRole(itemValue)}
+                  onValueChange={setSubRole}
                   style={styles.picker}
                   dropdownIconColor={COLORS.textMuted}
                   mode="dropdown"
                 >
-                  <Picker.Item label="Select your trade..." value="" color={COLORS.textMuted} />
-                  <Picker.Item label="Mechanic" value="Mechanic" color="#000000" />
-                  <Picker.Item label="Electrician" value="Electrician" color="#000000" />
-                  <Picker.Item label="Control" value="Control" color="#000000" />
-                  <Picker.Item label="Welder" value="Welder" color="#000000" />
+                  <Picker.Item label="Select your trade..." value=""           color={COLORS.textMuted} />
+                  <Picker.Item label="Mechanic"             value="Mechanic"   color="#000000" />
+                  <Picker.Item label="Electrician"          value="Electrician" color="#000000" />
+                  <Picker.Item label="Control"              value="Control"    color="#000000" />
+                  <Picker.Item label="Welder"               value="Welder"     color="#000000" />
                 </Picker>
               </View>
             </>
           )}
 
           <TouchableOpacity
-            style={[styles.btn, isLoading && styles.btnDisabled]}
+            style={[T.btnPrimary, { marginTop: S.lg }, isLoading && styles.btnDisabled]}
             onPress={handleCreateAccount}
             disabled={isLoading}
             activeOpacity={0.8}
@@ -268,8 +266,12 @@ function CreateScreen() {
 }
 
 const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: COLORS.bg },
-  scroll: { flexGrow: 1, alignItems: 'center', backgroundColor: COLORS.bg, paddingBottom: S.xxl },
+  scroll: {
+    flexGrow: 1,
+    alignItems: 'center',
+    backgroundColor: COLORS.bg,
+    paddingBottom: S.xxl,
+  },
   topBand: {
     width: '100%',
     height: 120,
@@ -289,13 +291,8 @@ const styles = StyleSheet.create({
     height: 130,
     resizeMode: 'contain',
   },
-  card: {
+  cardWide: {
     width: '92%',
-    backgroundColor: COLORS.surface,
-    borderRadius: R.lg,
-    padding: S.lg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
     ...SHADOW.lg,
   },
   cardHeader: {
@@ -310,13 +307,8 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     marginRight: S.sm,
   },
-  cardTitle: {
-    color: COLORS.text,
-    fontSize: F.xl,
-    fontWeight: '800',
-    letterSpacing: 3,
-  },
-  whiteLabel: {
+  // Labels inherit base T.label but are white in this dark card context
+  fieldLabel: {
     color: '#FFFFFF',
     fontSize: F.xs,
     fontWeight: '700',
@@ -324,11 +316,6 @@ const styles = StyleSheet.create({
     marginTop: 12,
     textTransform: 'uppercase',
     letterSpacing: 1,
-  },
-  halfField: { flex: 1 },
-  inputFocused: {
-    borderColor: COLORS.primaryBright,
-    backgroundColor: COLORS.surfaceHigh,
   },
   datePicker: {
     backgroundColor: COLORS.surfaceMid,
@@ -339,28 +326,12 @@ const styles = StyleSheet.create({
     paddingVertical: S.md - 2,
     marginVertical: S.xs,
   },
-  dateTextSet: { color: COLORS.text, fontSize: F.md },
+  dateTextSet:         { color: COLORS.text,     fontSize: F.md },
   dateTextPlaceholder: { color: COLORS.textMuted, fontSize: F.md },
   picker: {
     height: 50,
     width: '100%',
-    color: '#FFFFFF', // Selected item text is now white
-  },
-  pickerWrap: {
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 8,
-    backgroundColor: COLORS.surfaceMid,
-    marginTop: 4,
-    overflow: 'hidden',
-  },
-  btn: {
-    backgroundColor: COLORS.primary,
-    borderRadius: R.pill,
-    paddingVertical: S.md,
-    alignItems: 'center',
-    marginTop: S.lg,
-    ...SHADOW.red,
+    color: '#FFFFFF',
   },
   btnDisabled: { opacity: 0.6 },
   linkWrap: {
