@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   },
   logoSection: {
     flex: 1,
-    minHeight: SCREEN_HEIGHT * 0.05,
+    minHeight: SCREEN_HEIGHT * 0.01,
     backgroundColor: '#0D0D0D',
     alignItems: 'center',
     justifyContent: 'center',
@@ -160,8 +160,8 @@ const styles = StyleSheet.create({
     ...SHADOW.md,
   },
   logo: {
-    width: '75%',
-    height: 120,
+    width: 250,
+    height: 250,
   },
   formSection: {
     flex: 1,

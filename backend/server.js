@@ -448,6 +448,92 @@ app.patch('/support/:id/status', requireAuth, async (req, res) => {
   }
 });
 
+// ════════════════════════════════════════════════════════════════════════════
+// ASSET ROUTES
+// ════════════════════════════════════════════════════════════════════════════
+
+// ── Schemas ────────────────────────────────────────────────────────────────
+
+const assetSchema = new mongoose.Schema({
+  assetId:         { type: String, required: true, unique: true },
+  description:     { type: String, default: '' },
+  type:            { type: String, default: '' },
+  serialNumber:    { type: String, default: '' },
+  manufactureDate: { type: Date,   default: null },
+  expiryDate:      { type: Date,   default: null },
+  purchaseDate:    { type: Date,   default: null },
+  status:          { type: String, default: 'Operational' },
+  locationId:      { type: mongoose.Schema.Types.ObjectId, ref: 'Location', default: null },
+  technicianId:    { type: mongoose.Schema.Types.ObjectId, ref: 'User',     default: null },
+  cost:            { type: Number, default: null },
+  createdBy:       { type: String, default: '' },
+  updatedBy:       { type: String, default: '' },
+}, { timestamps: true, collection: 'Assets' });
+
+const assetDocumentSchema = new mongoose.Schema({
+  assetId:         { type: String, required: true },
+  description:     { type: String, default: '' },
+  type:            { type: String, default: '' },
+  serialNumber:    { type: String, default: '' },
+  manufactureDate: { type: Date,   default: null },
+  expiryDate:      { type: Date,   default: null },
+  status:          { type: String, default: 'Operational' },
+  locationId:      { type: String, default: '' },
+  cost:            { type: Number, default: null },
+  createdBy:       { type: String, default: '' },
+  updatedBy:       { type: String, default: '' },
+}, { timestamps: true, collection: 'AssetDocuments' });
+
+const Asset         = mongoose.model('Asset',         assetSchema,         'Assets');
+const AssetDocument = mongoose.model('AssetDocument', assetDocumentSchema, 'AssetDocuments');
+
+// ── GET /assets — list all assets ─────────────────────────────────────────
+app.get('/assets', requireAuth, async (req, res) => {
+  try {
+    const assets = await Asset.find({}).sort({ createdAt: -1 }).lean();
+    res.json({ success: true, assets });
+  } catch (err) {
+    console.error('Assets list error:', err);
+    res.status(500).json({ success: false, message: 'Failed to fetch assets' });
+  }
+});
+
+// ── GET /assets/:id — single asset merged with its AssetDocument ───────────
+app.get('/assets/:id', requireAuth, async (req, res) => {
+  try {
+    const asset = await Asset.findById(req.params.id).lean();
+    if (!asset) return res.status(404).json({ success: false, message: 'Asset not found' });
+
+    // Pull matching AssetDocument (matched by assetId string)
+    const doc = await AssetDocument.findOne({ assetId: asset.assetId }).lean();
+
+    // Merge: asset fields take priority; fill gaps from AssetDocument
+    const merged = {
+      _id:             asset._id,
+      assetId:         asset.assetId,
+      description:     asset.description     || doc?.description     || '',
+      type:            asset.type             || doc?.type             || '',
+      serialNumber:    asset.serialNumber     || doc?.serialNumber     || '',
+      manufactureDate: asset.manufactureDate  || doc?.manufactureDate  || null,
+      purchaseDate:    asset.purchaseDate     || null,
+      expiryDate:      asset.expiryDate       || doc?.expiryDate       || null,
+      status:          asset.status           || doc?.status           || '',
+      locationId:      asset.locationId?.toString?.() ?? doc?.locationId ?? '',
+      technicianId:    asset.technicianId?.toString?.() ?? null,
+      cost:            asset.cost             ?? doc?.cost             ?? null,
+      createdBy:       asset.createdBy        || doc?.createdBy        || '',
+      createdAt:       asset.createdAt        || doc?.createdAt        || null,
+      updatedBy:       asset.updatedBy        || doc?.updatedBy        || '',
+      updatedAt:       asset.updatedAt        || doc?.updatedAt        || null,
+    };
+
+    res.json({ success: true, asset: merged });
+  } catch (err) {
+    console.error('Asset detail error:', err);
+    res.status(500).json({ success: false, message: 'Failed to fetch asset' });
+  }
+});
+
 // ── Start ─────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(` Server running on port ${PORT}`);

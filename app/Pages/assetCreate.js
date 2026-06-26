@@ -148,14 +148,14 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: S.md,
+    marginTop: S.xxxl,
     marginBottom: S.xl,
   },
   backButton: {
     width: 40,
     height: 40,
-    borderRadius: 20, // Perfect circle
-    backgroundColor: COLORS.surfaceMid || '#e0e0e0', // Fallback color if missing
+    borderRadius: 20,
+    backgroundColor: COLORS.surfaceMid || '#e0e0e0', 
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: S.md,
@@ -164,21 +164,21 @@ const styles = StyleSheet.create({
     color: COLORS.textSec || '#000',
     fontSize: 20,
     fontWeight: 'bold',
-    lineHeight: 22, // Centers arrow vertically inside text node
+    lineHeight: 22, 
   },
-  // Picker wrapper — explicit spacing so it never bleeds into the label above
+
   pickerWrap: {
     backgroundColor: COLORS.surfaceMid,
     borderRadius: R.sm,
     borderWidth: 1,
     borderColor: COLORS.border,
     marginTop: S.xs,
-    marginBottom: S.sm,   // pushes the next label clear of the dropdown
+    marginBottom: S.sm, 
     overflow: 'hidden',
   },
   picker: {
     height: 50,
-    color: COLORS.textSec,  // matches Serial Number / other field text colour
+    color: COLORS.textSec,  
   },
 });
 

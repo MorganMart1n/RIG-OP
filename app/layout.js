@@ -10,6 +10,7 @@ import ProfileScreen       from './Pages/profile';
 import AssetSubmissionPage from './Pages/assetCreate';
 import MaintenanceScreen   from './Pages/maintenance';
 import AssetsScreen        from './Pages/assets';
+import AssetDetail         from './Pages/AssetDetail'
 import LogHubScreen        from './Pages/logHub';
 import LoginScreen         from './Pages/Login';
 import CreateScreen        from './Pages/createAccount';
@@ -92,6 +93,7 @@ export default function Layout() {
       <Stack.Screen name="LogMaintenance" component={LogMaintenanceScreen} />
       <Stack.Screen name="LogFailure"     component={LogFailureScreen}     />
       <Stack.Screen name="LogInspection"  component={LogInspectionScreen}  />
+      <Stack.Screen name="AssetDetail"    component={AssetDetail}/>
     </Stack.Navigator>
   );
 }

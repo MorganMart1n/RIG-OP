@@ -105,9 +105,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: S.md,
     paddingTop: Platform.OS === 'ios' ? 60 : S.lg,
     paddingBottom: S.md,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-    backgroundColor: COLORS.surface,
+
+
+
     ...SHADOW.md,
     gap: S.sm,
   },
@@ -121,13 +121,14 @@ const styles = StyleSheet.create({
     color: COLORS.text,
     fontSize: F.xl,
     fontWeight: '800',
+    marginTop:25,
     letterSpacing: 2,
   },
   headerSub: {
     color: COLORS.textMuted,
     fontSize: F.sm,
     letterSpacing: 0.5,
-    marginTop: 2,
+    marginTop: 10,
   },
   scroll: {
     padding: S.md,
